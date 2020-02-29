@@ -1,0 +1,32 @@
+jenkins:
+  systemMessage: "Welcome to the demo Jenkins IaC setup"
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "admin"
+  authorizationStrategy:
+    globalMatrix:
+      grantedPermissions:
+        - "Overall/Read:anonymous"
+        - "Job/Read:anonymous"
+        - "View/Read:anonymous"
+        - "Overall/Administer:authenticated"
+
+unclassified:
+  simple-theme-plugin:
+    elements:
+      - cssUrl:
+          url: "http://afonsof.com/jenkins-material-theme/dist/material-teal.css"
+
+
+groovy:
+  - script: >
+      println("--- Configuring Locale");
+      import jenkins.model.Jenkins;
+      import hudson.plugins.locale.PluginImpl;
+      PluginImpl localePlugin = (PluginImpl) Jenkins.instance.getPlugin("locale");
+      localePlugin.systemLocale = "en_US";
+      localePlugin.@ignoreAcceptLanguage=true;
+      println("--- Locale configured");

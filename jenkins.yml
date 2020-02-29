@@ -1,0 +1,19 @@
+version: '3.6'
+
+services:
+  jenkins:
+    build: .
+    image: jenkins-ci/ehabibov:1.0
+    container_name: 'jenkins_ci'
+    environment:
+      - CASC_JENKINS_CONFIG=/var/jenkins_home/jcasc-config
+    ports:
+      - '9080:8080'
+      - '50000:50000'
+    volumes:
+      - './volumes/jenkins:/var/jenkins_home'
+      - './jcasc-config:/var/jenkins_home/jcasc-config'
+
+volumes:
+  home:
+    driver: local
