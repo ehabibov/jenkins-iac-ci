@@ -6,13 +6,44 @@ jenkins:
       users:
         - id: "admin"
           password: "admin"
+        - id: "creator"
+          password: "creator"
+        - id: "user"
+          password: "user"
+
   authorizationStrategy:
-    globalMatrix:
-      grantedPermissions:
-        - "Overall/Read:anonymous"
-        - "Job/Read:anonymous"
-        - "View/Read:anonymous"
-        - "Overall/Administer:authenticated"
+    roleBased:
+      roles:
+        global:
+          - name: "Administrators"
+            description: "Jenkins administrators"
+            permissions:
+              - "Overall/Administer"
+            assignments:
+              - "admin"
+          - name: "Creators"
+            description: "Job creators"
+            permissions:
+              - "Overall/Read"
+              - "Job/Create"
+              - "Job/Build"
+              - "Job/Cancel"
+            assignments:
+              - "creator"
+          - name: "Users"
+            description: "Authorized users"
+            permissions:
+              - "Overall/Read"
+              - "Job/Build"
+              - "Job/Cancel"
+            assignments:
+              - "authenticated"
+          - name: "Unauthorized"
+            description: "Authorized users"
+            permissions:
+              - "Overall/Read"
+            assignments:
+              - "anonymous"
 
 unclassified:
   simple-theme-plugin:
@@ -20,13 +51,10 @@ unclassified:
       - cssUrl:
           url: "http://afonsof.com/jenkins-material-theme/dist/material-teal.css"
 
-
 groovy:
   - script: >
-      println("--- Configuring Locale");
       import jenkins.model.Jenkins;
       import hudson.plugins.locale.PluginImpl;
       PluginImpl localePlugin = (PluginImpl) Jenkins.instance.getPlugin("locale");
       localePlugin.systemLocale = "en_US";
       localePlugin.@ignoreAcceptLanguage=true;
-      println("--- Locale configured");

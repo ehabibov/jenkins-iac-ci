@@ -1,3 +1,4 @@
+role-strategy:2.16
 ace-editor:1.1
 ant:1.11
 apache-httpcomponents-client-4-api:4.5.10-2.0
@@ -31,7 +32,6 @@ git-server:1.9
 github-api:1.106
 github-branch-source:2.6.0
 github:1.29.5
-gradle:1.36
 jackson2-api:2.10.2
 javadoc:1.5
 job-dsl:1.76
@@ -83,13 +83,11 @@ resource-disposer:0.14
 run-condition:1.2
 scm-api:2.6.3
 script-security:1.70
-scriptler:3.1
 groovy:2.2
 simple-theme-plugin:0.6
 ssh-slaves:1.31.1
 ssh-credentials:1.18.1
 structs:1.20
-subversion:2.13.1
 timestamper:1.11
 token-macro:2.11
 trilead-api:1.0.5
