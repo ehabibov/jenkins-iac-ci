@@ -1,0 +1,50 @@
+pipeline {
+    agent {
+        label 'docker-agent'
+    }
+
+    options {
+        checkoutToSubdirectory 'git'
+    }
+
+    parameters {
+        gitParameter name: 'CI_SCRIPTS',
+                branchFilter: 'origin/(.*)',
+                defaultValue: 'master',
+                type: 'PT_BRANCH',
+                useRepository: '.*jenkins\\-iac\\-ci.git',
+                description: 'JOB DESCRIPTION'
+
+        gitParameter name: 'SELENIUM',
+                branchFilter: 'origin/(.*)',
+                defaultValue: 'master',
+                type: 'PT_BRANCH',
+                useRepository: '.*selenium.*'
+    }
+
+    stages {
+        stage('Up environment') {
+            steps {
+                git branch: "${params.CI_SCRIPTS}", url: 'https://github.com/ehabibov/jenkins-iac-ci.git'
+                git branch: "${params.SELENIUM}",   url: 'https://github.com/ehabibov/selenium-testng.git'
+                script {
+                    step([$class: 'DockerComposeBuilder',
+                          dockerComposeFile: 'git/application/orangehrm.yml',
+                          option: [$class: 'StartAllServices'],
+                          useCustomDockerComposeFile: true])
+                    step([$class: 'DockerComposeBuilder',
+                          dockerComposeFile: 'git/application/selenoid.yml',
+                          option: [$class: 'StartAllServices'],
+                          useCustomDockerComposeFile: true])
+                }
+            }
+        }
+
+        stage('Collect Reports') {
+            steps {
+                echo "Reports directory: ${workspace}/target/view"
+                zip dir: "${workspace}/target", zipFile: "reporrt", archive: true
+            }
+        }
+    }
+}

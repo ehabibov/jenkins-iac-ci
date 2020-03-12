@@ -2,18 +2,38 @@ version: '3.6'
 
 services:
   jenkins:
-    build: .
+    build: ci/jenkins-server
     image: jenkins-ci/ehabibov:1.0
     container_name: 'jenkins_ci'
     environment:
       - CASC_JENKINS_CONFIG=/var/jenkins_home/jcasc-config
+    networks:
+      - jenkins-net
     ports:
       - '9080:8080'
       - '50000:50000'
     volumes:
       - './volumes/jenkins:/var/jenkins_home'
       - './jcasc-config:/var/jenkins_home/jcasc-config'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    env_file:
+     - jenkins.env
+
+  proxy:
+    build: ci/docker-proxy
+    image: jenkins-ci/docker-proxy:1.0
+    container_name: 'proxy'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    networks:
+      jenkins-net:
+        aliases:
+          - dproxy
 
 volumes:
   home:
     driver: local
+
+networks:
+  jenkins-net:
+    driver: bridge

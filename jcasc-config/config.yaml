@@ -45,6 +45,42 @@ jenkins:
             assignments:
               - "anonymous"
 
+  clouds:
+    - docker:
+        name: docker-on-docker
+        dockerApi:
+          dockerHost:
+            uri: tcp://dproxy:2375
+        templates:
+          - labelString: "docker-agent"
+            dockerTemplateBase:
+              image: "jenkins/slave"
+            remoteFs: "/home/jenkins/agent"
+            connector:
+              attach:
+                user: "jenkins"
+            instanceCapStr: "10"
+            retentionStrategy:
+              idleMinutes: 5
+
+tool:
+  maven:
+    installations:
+      - name: "Maven3"
+        properties:
+          - installSource:
+              installers:
+                - maven:
+                    id: "3.6.6"
+  allure:
+    installations:
+      - name: "Allure2"
+        properties:
+          - installSource:
+              installers:
+                - allureCommandlineInstaller:
+                    id: "2.13.2"
+
 unclassified:
   simple-theme-plugin:
     elements:
