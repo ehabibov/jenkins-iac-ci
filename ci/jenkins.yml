@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
   jenkins:
-    build: ci/jenkins-server
+    build: jenkins-server
     image: jenkins-ci/ehabibov:1.0
     container_name: 'jenkins_ci'
     environment:
@@ -14,13 +14,13 @@ services:
       - '50000:50000'
     volumes:
       - './volumes/jenkins:/var/jenkins_home'
-      - './jcasc-config:/var/jenkins_home/jcasc-config'
+      - '../jcasc-config:/var/jenkins_home/jcasc-config'
       - '/var/run/docker.sock:/var/run/docker.sock'
     env_file:
      - jenkins.env
 
   proxy:
-    build: ci/docker-proxy
+    build: docker-proxy
     image: jenkins-ci/docker-proxy:1.0
     container_name: 'proxy'
     volumes:

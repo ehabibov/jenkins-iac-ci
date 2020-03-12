@@ -19,7 +19,7 @@ dashboard-view:2.12
 display-url-api:2.3.2
 docker-commons:1.16
 docker-plugin:1.1.9
-docker-workflow:1.22
+docker-workflow:1.23
 durable-task:1.33
 email-ext:2.69
 envinject-api:1.7
@@ -38,14 +38,12 @@ jackson2-api:2.10.3
 javadoc:1.5
 jdk-tool:1.4
 jenkins-multijob-plugin:1.32
-job-dsl:1.76
+job-dsl:1.77
 jquery-detached:1.2.1
 jquery:1.12.4-1
 jsch:0.1.55.2
-junit:1.28
 ldap:1.21
 locale:1.4
-lockable-resources:2.7
 mailer:1.30
 mapdb-api:1.0.9.0
 matrix-auth:2.5

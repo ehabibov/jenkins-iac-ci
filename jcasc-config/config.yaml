@@ -63,6 +63,24 @@ jenkins:
             retentionStrategy:
               idleMinutes: 5
 
+jobs:
+  - script: >
+      pipelineJob('pipeline') {
+          definition {
+              cpsScm {
+                  scriptPath 'pipeline-config/Jenkinsfile'
+                  scm {
+                    git {
+                        id = 'ci_scripts_repo'
+                        remote { url 'https://github.com/ehabibov/jenkins-iac-ci.git' }
+                        branch '*/master'
+                        extensions {}
+                    }
+                  }
+              }
+          }
+      }
+
 tool:
   maven:
     installations:
