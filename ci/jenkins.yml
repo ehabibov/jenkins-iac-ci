@@ -7,8 +7,6 @@ services:
     container_name: 'jenkins_ci'
     environment:
       - CASC_JENKINS_CONFIG=/var/jenkins_home/jcasc-config
-    networks:
-      - jenkins-net
     ports:
       - '9080:8080'
       - '50000:50000'
@@ -16,8 +14,8 @@ services:
       - './volumes/jenkins:/var/jenkins_home'
       - '../jcasc-config:/var/jenkins_home/jcasc-config'
       - '/var/run/docker.sock:/var/run/docker.sock'
-    env_file:
-     - jenkins.env
+    networks:
+      - jenkins-net
 
   proxy:
     build: docker-proxy
@@ -29,10 +27,6 @@ services:
       jenkins-net:
         aliases:
           - dproxy
-
-volumes:
-  home:
-    driver: local
 
 networks:
   jenkins-net:

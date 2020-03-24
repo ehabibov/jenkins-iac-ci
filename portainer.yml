@@ -1,0 +1,14 @@
+version: '3.6'
+
+services:
+  portainer:
+    image: portainer/portainer:1.23.2
+    container_name: 'portainer'
+    ports:
+    - '5550:9000'
+    volumes:
+    - '/var/run/docker.sock:/var/run/docker.sock'
+
+networks:
+  net:
+    driver: bridge

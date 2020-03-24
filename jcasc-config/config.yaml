@@ -62,20 +62,22 @@ jenkins:
             instanceCapStr: "10"
             retentionStrategy:
               idleMinutes: 5
+            removeVolumes: true
 
 jobs:
   - script: >
-      pipelineJob('pipeline') {
+      pipelineJob('integration-pipeline') {
           definition {
               cpsScm {
-                  scriptPath 'pipeline-config/Jenkinsfile'
+                  scriptPath('pipeline-config/Jenkinsfile')
+                  lightweight(true)
                   scm {
-                    git {
-                        id = 'ci_scripts_repo'
-                        remote { url 'https://github.com/ehabibov/jenkins-iac-ci.git' }
-                        branch '*/master'
-                        extensions {}
-                    }
+                      git {
+                          remote {
+                              url 'https://github.com/ehabibov/jenkins-iac-ci.git'
+                          }
+                      branch 'master'
+                      }
                   }
               }
           }

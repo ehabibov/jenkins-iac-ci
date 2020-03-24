@@ -1,50 +1,36 @@
-pipeline {
-    agent {
-        label 'docker-agent'
-    }
+properties([
+        parameters([
+                gitParameter(name: 'CI_SCRIPTS',
+                        branchFilter: 'origin/(.*)',
+                        defaultValue: 'master',
+                        type: 'PT_BRANCH',
+                        useRepository: '.*jenkins\\-iac\\-ci.git',
+                        description: 'CI support scripts location'
+                ),
+                gitParameter(name: 'SELENIUM',
+                        branchFilter: 'origin/(.*)',
+                        defaultValue: 'master',
+                        type: 'PT_BRANCH',
+                        useRepository: '.*selenium.*',
+                        description: 'Integration tests'
+                ),
+        ])
+])
 
-    options {
-        checkoutToSubdirectory 'git'
-    }
+node('docker-agent') {
 
-    parameters {
-        gitParameter name: 'CI_SCRIPTS',
-                branchFilter: 'origin/(.*)',
-                defaultValue: 'master',
-                type: 'PT_BRANCH',
-                useRepository: '.*jenkins\\-iac\\-ci.git',
-                description: 'JOB DESCRIPTION'
-
-        gitParameter name: 'SELENIUM',
-                branchFilter: 'origin/(.*)',
-                defaultValue: 'master',
-                type: 'PT_BRANCH',
-                useRepository: '.*selenium.*'
-    }
-
-    stages {
-        stage('Up environment') {
-            steps {
-                git branch: "${params.CI_SCRIPTS}", url: 'https://github.com/ehabibov/jenkins-iac-ci.git'
-                git branch: "${params.SELENIUM}",   url: 'https://github.com/ehabibov/selenium-testng.git'
-                script {
-                    step([$class: 'DockerComposeBuilder',
-                          dockerComposeFile: 'git/application/orangehrm.yml',
-                          option: [$class: 'StartAllServices'],
-                          useCustomDockerComposeFile: true])
-                    step([$class: 'DockerComposeBuilder',
-                          dockerComposeFile: 'git/application/selenoid.yml',
-                          option: [$class: 'StartAllServices'],
-                          useCustomDockerComposeFile: true])
-                }
-            }
-        }
-
-        stage('Collect Reports') {
-            steps {
-                echo "Reports directory: ${workspace}/target/view"
-                zip dir: "${workspace}/target", zipFile: "reporrt", archive: true
-            }
-        }
+    stage('Up environment') {
+        checkout([
+                $class: 'GitSCM',
+                branches: [[name: CI_SCRIPTS]],
+                extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'infrastructure']],
+                userRemoteConfigs: [[url: 'https://github.com/ehabibov/jenkins-iac-ci.git']]
+        ])
+        checkout([
+                $class: 'GitSCM',
+                branches: [[name: SELENIUM]],
+                extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'integration']],
+                userRemoteConfigs: [[url: 'https://github.com/ehabibov/selenium-testng.git']]
+        ])
     }
 }
