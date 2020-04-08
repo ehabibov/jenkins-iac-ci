@@ -7,6 +7,10 @@ RUN apt-get update -qq && apt-get install -qqy apt-transport-https ca-certificat
     apt-get update -qq && apt-get install -qqy docker-ce-cli && \
     groupadd docker && usermod -aG docker jenkins
 
+RUN apt-get update -qq && apt-get -qqy install software-properties-common && \
+    apt-add-repository --yes ppa:ansible/ansible && \
+    apt-get -qqy install ansible
+
 COPY plugins.txt /var/jenkins_home
 RUN /usr/local/bin/install-plugins.sh < /var/jenkins_home/plugins.txt
 ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
