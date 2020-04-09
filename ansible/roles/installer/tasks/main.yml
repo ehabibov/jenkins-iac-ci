@@ -2,7 +2,7 @@
  - name: Create application network
    docker_network:
      name: 'hrm-net'
-   tags: install
+   tags: deploy
 
  - name: Run MariaDB container
    docker_container:
@@ -18,7 +18,7 @@
        ALLOW_EMPTY_PASSWORD: 'yes'
      state: started
    register: db_container_metadata
-   tags: install
+   tags: deploy
 
  - name: Wait for MySQL to accept connections
    become: yes
@@ -31,7 +31,7 @@
    register: mariadb_running
    until: mariadb_running is success
    retries: 10
-   tags: install
+   tags: deploy
 
  - name: Run HRM container
    docker_container:
@@ -50,7 +50,7 @@
        ALLOW_EMPTY_PASSWORD: 'yes'
      state: started
    register: hrm_container_metadata
-   tags: install
+   tags: deploy
 
  - name: Wait for HRM to be installed
    uri:
@@ -60,4 +60,4 @@
    until: result.status == 200
    retries: 60
    delay: 5
-   tags: install
+   tags: deploy

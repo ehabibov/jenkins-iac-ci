@@ -1,6 +1,6 @@
 pipeline {
     agent none
-
+    options { skipDefaultCheckout true }
     parameters {
         gitParameter name: 'CI_SCRIPTS',
                 branchFilter: 'origin/(.*)',
@@ -18,7 +18,7 @@ pipeline {
 
     stages {
         stage('Clone test suite') {
-            agent {label 'docker-agent'}
+            agent { label 'docker-agent'}
             steps {
                 checkout scm: [
                         $class: 'GitSCM',
@@ -29,9 +29,7 @@ pipeline {
             }
         }
         stage('Deploy application environment') {
-            agent {
-                label 'master'
-            }
+            agent { label 'master' }
             steps {
                 cleanWs deleteDirs: true
                 checkout scm: [
@@ -40,7 +38,13 @@ pipeline {
                         extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'infrastructure']],
                         userRemoteConfigs: [[url: 'https://github.com/ehabibov/jenkins-iac-ci.git']]
                 ]
-                ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml')
+                ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "deploy", colorized: true)
+            }
+        }
+        stage("Destroy environment"){
+            agent { label 'master'}
+            steps {
+                ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "destroy", colorized: true)
             }
         }
     }

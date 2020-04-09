@@ -7,11 +7,15 @@ RUN apt-get update -qq && apt-get install -qqy apt-transport-https ca-certificat
     apt-get update -qq && apt-get install -qqy docker-ce-cli && \
     groupadd docker && usermod -aG docker jenkins
 
-RUN apt-get update -qq && apt-get -qqy install software-properties-common && \
-    apt-add-repository --yes ppa:ansible/ansible && \
-    apt-get -qqy install ansible
+RUN apt-get update -qq && apt-get install -qqy software-properties-common && \
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+    python get-pip.py && \
+    pip install requests docker-py && \
+    apt-add-repository "deb [arch=amd64] http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 && \
+    apt-get update -qq && apt-get install -qqy ansible
 
 COPY plugins.txt /var/jenkins_home
 RUN /usr/local/bin/install-plugins.sh < /var/jenkins_home/plugins.txt
-ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
+ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false -DexecutableWar.jetty.disableCustomSessionIdCookieName=true
 VOLUME /var/jenkins_home
