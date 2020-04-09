@@ -1,36 +1,47 @@
-properties([
-        parameters([
-                gitParameter(name: 'CI_SCRIPTS',
-                        branchFilter: 'origin/(.*)',
-                        defaultValue: 'master',
-                        type: 'PT_BRANCH',
-                        useRepository: '.*jenkins\\-iac\\-ci.git',
-                        description: 'CI support scripts location'
-                ),
-                gitParameter(name: 'SELENIUM',
-                        branchFilter: 'origin/(.*)',
-                        defaultValue: 'master',
-                        type: 'PT_BRANCH',
-                        useRepository: '.*selenium.*',
-                        description: 'Integration tests'
-                ),
-        ])
-])
+pipeline {
+    agent none
 
-node('docker-agent') {
+    parameters {
+        gitParameter name: 'CI_SCRIPTS',
+                branchFilter: 'origin/(.*)',
+                defaultValue: 'master',
+                type: 'PT_BRANCH',
+                useRepository: '.*jenkins\\-iac\\-ci.git',
+                description: 'JOB DESCRIPTION'
 
-    stage('Up environment') {
-        checkout([
-                $class: 'GitSCM',
-                branches: [[name: CI_SCRIPTS]],
-                extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'infrastructure']],
-                userRemoteConfigs: [[url: 'https://github.com/ehabibov/jenkins-iac-ci.git']]
-        ])
-        checkout([
-                $class: 'GitSCM',
-                branches: [[name: SELENIUM]],
-                extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'integration']],
-                userRemoteConfigs: [[url: 'https://github.com/ehabibov/selenium-testng.git']]
-        ])
+        gitParameter name: 'SELENIUM',
+                branchFilter: 'origin/(.*)',
+                defaultValue: 'master',
+                type: 'PT_BRANCH',
+                useRepository: '.*selenium.*'
+    }
+
+    stages {
+        stage('Clone test suite') {
+            agent {label 'docker-agent'}
+            steps {
+                checkout scm: [
+                        $class: 'GitSCM',
+                        branches: [[name: SELENIUM]],
+                        extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'integration']],
+                        userRemoteConfigs: [[url: 'https://github.com/ehabibov/selenium-testng.git']]
+                ]
+            }
+        }
+        stage('Deploy application environment') {
+            agent {
+                label 'master'
+            }
+            steps {
+                cleanWs deleteDirs: true
+                checkout scm: [
+                        $class: 'GitSCM',
+                        branches: [[name: CI_SCRIPTS]],
+                        extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'infrastructure']],
+                        userRemoteConfigs: [[url: 'https://github.com/ehabibov/jenkins-iac-ci.git']]
+                ]
+                ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml')
+            }
+        }
     }
 }
