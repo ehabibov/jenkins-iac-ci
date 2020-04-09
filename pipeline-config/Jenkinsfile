@@ -38,13 +38,17 @@ pipeline {
                         extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'infrastructure']],
                         userRemoteConfigs: [[url: 'https://github.com/ehabibov/jenkins-iac-ci.git']]
                 ]
-                ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "deploy", colorized: true)
+                ansiColor('xterm') {
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "deploy", colorized: true)
+                }
             }
         }
         stage("Destroy environment"){
             agent { label 'master'}
             steps {
-                ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "destroy", colorized: true)
+                ansiColor('xterm') {
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "destroy", colorized: true)
+                }
             }
         }
     }
