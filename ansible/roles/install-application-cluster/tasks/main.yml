@@ -1,0 +1,59 @@
+---
+ - name: Create application network
+   docker_network:
+     name: "{{ application_network }}"
+
+ - name: Run MariaDB container
+   docker_container:
+     name: mariadb
+     image: bitnami/mariadb:10.2
+     networks:
+       - name: "{{ application_network }}"
+     published_ports:
+       - "{{ mariadb_host_port }}:{{ mariadb_container_port }}"
+     env:
+       MARIADB_USER: "bn_orangehrm"
+       MARIADB_DATABASE: "bitnami_orangehrm"
+       ALLOW_EMPTY_PASSWORD: "yes"
+     state: started
+   register: db_container_metadata
+
+ - name: Wait for MySQL to accept connections
+   become: yes
+   wait_for:
+     host: "{{ db_container_metadata['ansible_facts']['docker_container']['NetworkSettings']['IPAddress'] }}"
+     port: "{{ mariadb_host_port }}"
+     state: drained
+     connect_timeout: 1
+     timeout: 30
+   register: mariadb_running
+   until: mariadb_running is success
+   retries: 10
+   tags: mysql-wait
+
+ - name: Run HRM container
+   docker_container:
+     name: orange-hrm
+     image: bitnami/orangehrm:4.3.4-0-debian-10-r22
+     networks:
+       - name: "{{ application_network }}"
+     published_ports:
+       - "{{ hrm_http_port_mapping }}"
+       - "{{ hrm_https_port_mapping }}"
+     env:
+       MARIADB_HOST: "mariadb"
+       MARIADB_PORT_NUMBER: "{{ mariadb_container_port }}"
+       ORANGEHRM_DATABASE_USER: "bn_orangehrm"
+       ORANGEHRM_DATABASE_NAME: "bitnami_orangehrm"
+       ALLOW_EMPTY_PASSWORD: "yes"
+     state: started
+   register: hrm_container_metadata
+
+ - name: Wait for HRM to be installed
+   uri:
+     url: "http://{{ inventory_hostname }}:8080"
+     status_code: 200
+   register: result
+   until: result.status == 200
+   retries: 60
+   delay: 5

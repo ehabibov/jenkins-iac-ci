@@ -1,0 +1,15 @@
+---
+ - name: Delete Selenoid network
+   docker_network:
+     name: "{{ selenoid_network }}"
+     state: "{{ desired_state }}"
+
+ - name: Delete Selenoid container
+   docker_container:
+     name: selenoid
+     state: "{{ desired_state }}"
+
+ - name: Delete Selenoid UI container
+   docker_container:
+     name: selenoid-ui
+     state: "{{ desired_state }}"

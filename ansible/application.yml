@@ -1,5 +1,17 @@
 ---
 - hosts: this_machine
+  vars:
+    application_network: application-net
   roles:
-    - installer
-    - destroyer
+    - role: install-application-cluster
+      vars:
+        mariadb_host_port: "3306"
+        mariadb_container_port: "3306"
+        hrm_http_port_mapping: "8080:80"
+        hrm_https_port_mapping: "443:443"
+        desired_state: started
+      tags: app-deploy
+    - role: destroy-application-cluster
+      vars:
+        desired_state: absent
+      tags: app-destroy

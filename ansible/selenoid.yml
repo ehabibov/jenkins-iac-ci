@@ -1,0 +1,20 @@
+---
+- hosts: this_machine
+  vars:
+    selenoid_network: selenoid-net
+  roles:
+    - role: install-selenoid-cluster
+      vars:
+        selenoid_host_port: "4444"
+        selenoid_container_port: "4444"
+        service_startup_timeout: "15s"
+        session_delete_timeout: "15s"
+        timeout: "15s"
+        selenoid_ui_host_port: "9090"
+        selenoid_ui_container_port: "8080"
+        desired_state: started
+      tags: selenoid-deploy
+    - role: destroy-selenoid-cluster
+      vars:
+        desired_state: absent
+      tags: selenoid-destroy

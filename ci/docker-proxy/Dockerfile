@@ -3,4 +3,4 @@ FROM centos:centos7
 RUN yum -y install socat && yum clean all
 VOLUME /var/run/docker.sock
 EXPOSE 2375
-ENTRYPOINT ["socat", "TCP-LISTEN:2375,reuseaddr,fork", "UNIX-CLIENT:/var/run/docker.sock"]
+ENTRYPOINT ["socat", "-v", "TCP-LISTEN:2375,reuseaddr,fork", "UNIX-CLIENT:/var/run/docker.sock"]

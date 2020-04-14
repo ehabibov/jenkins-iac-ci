@@ -1,0 +1,15 @@
+---
+ - name: Delete application network
+   docker_network:
+     name: "{{ application_network }}"
+     state: "{{ desired_state }}"
+
+ - name: Delete MariaDB container
+   docker_container:
+     name: mariadb
+     state: "{{ desired_state }}"
+
+ - name: Delete HRM container
+   docker_container:
+     name: orange-hrm
+     state: "{{ desired_state }}"

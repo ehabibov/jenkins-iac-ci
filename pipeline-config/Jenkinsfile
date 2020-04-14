@@ -28,7 +28,7 @@ pipeline {
                 ]
             }
         }
-        stage('Deploy application environment') {
+        stage('Checkout infrastructure scripts') {
             agent { label 'master' }
             steps {
                 cleanWs deleteDirs: true
@@ -38,16 +38,37 @@ pipeline {
                         extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'infrastructure']],
                         userRemoteConfigs: [[url: 'https://github.com/ehabibov/jenkins-iac-ci.git']]
                 ]
+            }
+        }
+        stage('Deploy application environment') {
+            agent { label 'master' }
+            steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "deploy", colorized: true)
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "app-deploy", colorized: true)
                 }
             }
         }
-        stage("Destroy environment"){
+        stage("Destroy Selenoid environment"){
             agent { label 'master'}
             steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "destroy", colorized: true)
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "selenoid-deploy", colorized: true)
+                }
+            }
+        }
+        stage("Destroy application environment"){
+            agent { label 'master'}
+            steps {
+                ansiColor('xterm') {
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "app-destroy", colorized: true)
+                }
+            }
+        }
+        stage("Destroy Selenoid environment"){
+            agent { label 'master'}
+            steps {
+                ansiColor('xterm') {
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "selenoid-destroy", colorized: true)
                 }
             }
         }
