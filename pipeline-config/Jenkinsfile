@@ -44,32 +44,38 @@ pipeline {
             agent { label 'master' }
             steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "app-deploy", colorized: true)
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "app-deploy", colorized: true, extras: "-vvv")
                 }
             }
         }
-        stage("Destroy Selenoid environment"){
+        stage("Deploy selenoid environment"){
             agent { label 'master'}
             steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "selenoid-deploy", colorized: true)
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/selenoid.yml', tags: "selenoid-deploy", colorized: true, extras: "-vvv")
                 }
             }
         }
-        stage("Destroy application environment"){
+        stage("Destroy spplication environment"){
             agent { label 'master'}
             steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "app-destroy", colorized: true)
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "app-destroy", colorized: true, extras: "-vvv")
                 }
             }
         }
-        stage("Destroy Selenoid environment"){
+        stage("Destroy selenoid environment"){
             agent { label 'master'}
             steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "selenoid-destroy", colorized: true)
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/selenoid.yml', tags: "selenoid-destroy", colorized: true, extras: "-vvv")
                 }
+            }
+        }
+        stage("Cleanup master workspace"){
+            agent { label 'master'}
+            steps {
+                cleanWs deleteDirs: true
             }
         }
     }
