@@ -1,20 +1,17 @@
 ---
- - name: Create application network
+ - name: Create Selenoid network
    docker_network:
      name: "{{ selenoid_network }}"
 
- - name: Run Selenoid container
+ - name: Create Selenoid container
    docker_container:
      name: "selenoid"
      image: "aerokube/selenoid:latest"
-     detach: false
      networks:
        - name: "{{ selenoid_network }}"
      published_ports:
        - "{{ selenoid_host_port }}:{{ selenoid_container_port }}"
-     volumes:
-       - "{{ role_path }}/files:/etc/selenoid:ro"
-     command: ["-conf", "/etc/selenoid/browsers.json",
+     command: ["-conf", "/etc/browsers.json",
                "-container-network", "{{ selenoid_network }}",
                "-video-output-dir", "/opt/selenoid/video",
                "-log-output-dir", "/opt/selenoid/logs",
@@ -22,6 +19,14 @@
                "-session-delete-timeout", "{{ session_delete_timeout }}",
                "-timeout", "{{ timeout }}",
                "-capture-driver-logs"]
+     state: present
+
+ - name: Copy 'browsers.json' to container
+   shell: "docker cp {{ role_path }}/files/browsers.json selenoid:/etc"
+
+ - name: Start Selenoid container
+   docker_container:
+     name: "selenoid"
      state: "{{ desired_state }}"
    register: selenoid_metadata
 
@@ -29,7 +34,7 @@
    docker_container:
      name: "selenoid-ui"
      image: "aerokube/selenoid-ui:latest"
-     detach: false
+     detach: true
      networks:
        - name: "{{ selenoid_network }}"
      published_ports:
