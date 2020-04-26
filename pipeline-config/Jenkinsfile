@@ -14,6 +14,7 @@ pipeline {
                 defaultValue: 'master',
                 type: 'PT_BRANCH',
                 useRepository: '.*selenium.*'
+        booleanParam name: 'DELETE_APP', description: 'Delete application and database containers after build', defaultValue: true
     }
 
     stages {
@@ -44,7 +45,7 @@ pipeline {
             agent { label 'master' }
             steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "app-deploy", colorized: true, extras: "-vvv")
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "app-deploy", colorized: true, extras: "-v")
                 }
             }
         }
@@ -52,15 +53,18 @@ pipeline {
             agent { label 'master'}
             steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/selenoid.yml', tags: "selenoid-deploy", colorized: true, extras: "-vvv")
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/selenoid.yml', tags: "selenoid-deploy", colorized: true, extras: "-v")
                 }
             }
         }
         stage("Destroy spplication environment"){
             agent { label 'master'}
+            when {
+                expression { params.DELETE_APP.toBoolean() }
+            }
             steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "app-destroy", colorized: true, extras: "-vvv")
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "app-destroy", colorized: true, extras: "-v")
                 }
             }
         }
@@ -68,7 +72,7 @@ pipeline {
             agent { label 'master'}
             steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/selenoid.yml', tags: "selenoid-destroy", colorized: true, extras: "-vvv")
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/selenoid.yml', tags: "selenoid-destroy", colorized: true, extras: "-v")
                 }
             }
         }
