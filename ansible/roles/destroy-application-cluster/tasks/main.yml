@@ -6,10 +6,10 @@
 
  - name: Delete MariaDB container
    docker_container:
-     name: mariadb
+     name: "mariadb-{{ build_tag }}"
      state: "{{ desired_state }}"
 
  - name: Delete HRM container
    docker_container:
-     name: orange-hrm
+     name: "orange-hrm-{{ build_tag }}"
      state: "{{ desired_state }}"

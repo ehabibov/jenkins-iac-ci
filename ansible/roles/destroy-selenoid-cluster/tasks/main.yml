@@ -6,10 +6,10 @@
 
  - name: Delete Selenoid container
    docker_container:
-     name: selenoid
+     name: "selenoid-{{ build_tag }}"
      state: "{{ desired_state }}"
 
  - name: Delete Selenoid UI container
    docker_container:
-     name: selenoid-ui
+     name: "selenoid-ui-{{ build_tag }}"
      state: "{{ desired_state }}"

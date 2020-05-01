@@ -5,8 +5,8 @@
 
  - name: Run MariaDB container
    docker_container:
-     name: mariadb
-     image: bitnami/mariadb:10.2
+     name: "mariadb-{{ build_tag }}"
+     image: "bitnami/mariadb:10.2"
      networks:
        - name: "{{ application_network }}"
      published_ports:
@@ -19,7 +19,6 @@
    register: db_container_metadata
 
  - name: Wait for MySQL to accept connections
-   become: yes
    wait_for:
      host: "{{ db_container_metadata['ansible_facts']['docker_container']['NetworkSettings']['IPAddress'] }}"
      port: "{{ mariadb_host_port }}"
@@ -33,13 +32,13 @@
 
  - name: Run HRM container
    docker_container:
-     name: orange-hrm
-     image: bitnami/orangehrm:4.3.4-0-debian-10-r22
+     name: "orange-hrm-{{ build_tag }}"
+     image: "bitnami/orangehrm:4.3.4-0-debian-10-r22"
      networks:
        - name: "{{ application_network }}"
      published_ports:
-       - "{{ hrm_http_port_mapping }}"
-       - "{{ hrm_https_port_mapping }}"
+       - "{{ hrm_http_host_port }}:{{ hrm_http_container_port }}"
+       - "{{ hrm_https_host_port }}:{{ hrm_https_container_port }}"
      env:
        MARIADB_HOST: "mariadb"
        MARIADB_PORT_NUMBER: "{{ mariadb_container_port }}"
@@ -51,7 +50,7 @@
 
  - name: Wait for HRM to be installed
    uri:
-     url: "http://{{ inventory_hostname }}:8080"
+     url: "http://{{ inventory_hostname }}:{{ hrm_http_host_port }}"
      status_code: 200
    register: result
    until: result.status == 200
