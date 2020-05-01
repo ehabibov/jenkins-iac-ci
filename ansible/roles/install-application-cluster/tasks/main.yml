@@ -5,7 +5,7 @@
 
  - name: Run MariaDB container
    docker_container:
-     name: "mariadb-{{ build_tag }}"
+     name: "mariadb{{ build_tag }}"
      image: "bitnami/mariadb:10.2"
      networks:
        - name: "{{ application_network }}"
@@ -32,7 +32,7 @@
 
  - name: Run HRM container
    docker_container:
-     name: "orange-hrm-{{ build_tag }}"
+     name: "orange-hrm{{ build_tag }}"
      image: "bitnami/orangehrm:4.3.4-0-debian-10-r22"
      networks:
        - name: "{{ application_network }}"

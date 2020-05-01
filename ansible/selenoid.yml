@@ -1,7 +1,7 @@
 ---
 - hosts: this_machine
   vars:
-    build_tag: "{{ lookup('env','BUILD_TAG') | default('na', true) }}"
+    build_tag: "--{{ lookup('env','BUILD_TAG') | default('na', true) }}"
     selenoid_network: selenoid-net
   roles:
     - role: install-selenoid-cluster
