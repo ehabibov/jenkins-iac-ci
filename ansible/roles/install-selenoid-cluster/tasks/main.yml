@@ -9,6 +9,8 @@
      image: "aerokube/selenoid:latest"
      networks:
        - name: "{{ selenoid_network }}"
+     volumes:
+       - "/var/run/docker.sock:/var/run/docker.sock"
      published_ports:
        - "{{ selenoid_host_port }}:{{ selenoid_container_port }}"
      command: ["-conf", "/etc/browsers.json",
