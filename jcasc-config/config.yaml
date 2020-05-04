@@ -55,6 +55,7 @@ jenkins:
           - labelString: "docker-agent"
             dockerTemplateBase:
               image: "jenkins/slave"
+              network: "infrastructure-net"
             remoteFs: "/home/jenkins/agent"
             connector:
               attach:
@@ -91,7 +92,7 @@ tool:
           - installSource:
               installers:
                 - maven:
-                    id: "3.6.6"
+                    id: "3.6.3"
   allure:
     installations:
       - name: "Allure2"
@@ -110,6 +111,11 @@ unclassified:
     elements:
       - cssUrl:
           url: "http://afonsof.com/jenkins-material-theme/dist/material-teal.css"
+
+security:
+  scriptApproval:
+    approvedSignatures:
+      - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods toBoolean java.lang.Boolean
 
 groovy:
   - script: >

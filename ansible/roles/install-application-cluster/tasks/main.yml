@@ -40,7 +40,7 @@
        - "{{ hrm_http_host_port }}:{{ hrm_http_container_port }}"
        - "{{ hrm_https_host_port }}:{{ hrm_https_container_port }}"
      env:
-       MARIADB_HOST: "mariadb"
+       MARIADB_HOST: "mariadb{{ build_tag }}"
        MARIADB_PORT_NUMBER: "{{ mariadb_container_port }}"
        ORANGEHRM_DATABASE_USER: "bn_orangehrm"
        ORANGEHRM_DATABASE_NAME: "bitnami_orangehrm"
@@ -50,7 +50,7 @@
 
  - name: Wait for HRM to be installed
    uri:
-     url: "http://{{ inventory_hostname }}:{{ hrm_http_host_port }}"
+     url: "http://orange-hrm{{ build_tag }}:{{ hrm_http_container_port }}"
      status_code: 200
    register: result
    until: result.status == 200

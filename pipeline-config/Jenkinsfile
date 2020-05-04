@@ -1,6 +1,11 @@
+def mavenDebugFlag = ""
+
 pipeline {
     agent none
-    options { skipDefaultCheckout true }
+    options {
+        skipDefaultCheckout true
+        timestamps()
+    }
     parameters {
         gitParameter name: 'CI_SCRIPTS',
                 branchFilter: 'origin/(.*)',
@@ -8,27 +13,16 @@ pipeline {
                 type: 'PT_BRANCH',
                 useRepository: '.*jenkins\\-iac\\-ci.git',
                 description: 'JOB DESCRIPTION'
-
         gitParameter name: 'SELENIUM',
                 branchFilter: 'origin/(.*)',
                 defaultValue: 'master',
                 type: 'PT_BRANCH',
                 useRepository: '.*selenium.*'
         booleanParam name: 'DELETE_APP', description: 'Delete application and database containers after build', defaultValue: true
+        booleanParam name: 'MAVEN_DEBUG', description: 'Maven logger debug level', defaultValue: false
     }
 
     stages {
-        stage('Clone test suite') {
-            agent { label 'docker-agent'}
-            steps {
-                checkout scm: [
-                        $class: 'GitSCM',
-                        branches: [[name: SELENIUM]],
-                        extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'integration']],
-                        userRemoteConfigs: [[url: 'https://github.com/ehabibov/selenium-testng.git']]
-                ]
-            }
-        }
         stage('Checkout infrastructure scripts') {
             agent { label 'master' }
             steps {
@@ -57,7 +51,41 @@ pipeline {
                 }
             }
         }
-        stage("Destroy spplication environment"){
+        stage('Clone test suite') {
+            agent { label 'docker-agent'}
+            tools {
+                maven 'Maven3'
+                allure 'Allure2'
+            }
+            steps {
+                checkout scm: [
+                        $class: 'GitSCM',
+                        branches: [[name: SELENIUM]],
+                        extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'integration']],
+                        userRemoteConfigs: [[url: 'https://github.com/ehabibov/selenium-testng.git']]
+                ]
+                dir ("integration"){
+                    sh "mvn dependency:resolve"
+                    sh "mvn dependency:resolve-plugins"
+                    script {
+                        if (params.MAVEN_DEBUG == true){
+                            mavenDebugFlag = "-X"
+                        }
+                    }
+                    sh """
+                        mvn test ${mavenDebugFlag} -ntp\
+                        -Dremote.driver=true\
+                        -Dapplication.host=http://orange-hrm--${env.BUILD_TAG}\
+                        -Dapplication.port=80\
+                        -Dremote.driver.url=http://selenoid--${env.BUILD_TAG}:4444/wd/hub\
+                        -Dbrowser.type=chrome\
+                        -Dremote.browser.version=80.0\
+                        -Dlog4j.rootLogger=\"TRACE, STDOUT\"
+                    """
+                }
+            }
+        }
+        stage("Destroy application environment"){
             agent { label 'master'}
             when {
                 expression { params.DELETE_APP.toBoolean() }
