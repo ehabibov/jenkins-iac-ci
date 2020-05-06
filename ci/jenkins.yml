@@ -31,3 +31,4 @@ services:
 networks:
   jenkins-net:
     driver: bridge
+    name: jenkins-net

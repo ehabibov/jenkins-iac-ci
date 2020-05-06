@@ -3,6 +3,11 @@
    docker_network:
      name: "{{ application_network }}"
 
+ - name: Attach Jenkins to pipeline infrastructure network
+   docker_network:
+     name: "{{ application_network }}"
+     connected: "{{ jenkins_container }}"
+
  - name: Run MariaDB container
    docker_container:
      name: "mariadb{{ build_tag }}"

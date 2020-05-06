@@ -6,6 +6,7 @@
   roles:
     - role: install-application-cluster
       vars:
+        jenkins_container: "jenkins_ci"
         mariadb_host_port: "3306"
         mariadb_container_port: "3306"
         hrm_http_host_port: "8080"
