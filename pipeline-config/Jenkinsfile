@@ -65,8 +65,8 @@ pipeline {
                         userRemoteConfigs: [[url: 'https://github.com/ehabibov/selenium-testng.git']]
                 ]
                 dir ("integration"){
-                    sh "mvn dependency:resolve"
-                    sh "mvn dependency:resolve-plugins"
+                    sh "mvn -ntp dependency:resolve"
+                    sh "mvn -ntp dependency:resolve-plugins"
                     script {
                         if (params.MAVEN_DEBUG == true){
                             mavenDebugFlag = "-X"

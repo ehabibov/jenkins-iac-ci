@@ -3,7 +3,7 @@
    docker_network:
      name: "{{ application_network }}"
 
- - name: Attach Jenkins to pipeline infrastructure network
+ - name: Attach Jenkins to application network
    docker_network:
      name: "{{ application_network }}"
      connected: "{{ jenkins_container }}"
