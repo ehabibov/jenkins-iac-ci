@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:2.230
+FROM jenkins/jenkins:2.235
 
 USER root
 RUN apt-get update -qq && apt-get install -qqy apt-transport-https ca-certificates gnupg-agent software-properties-common && \
