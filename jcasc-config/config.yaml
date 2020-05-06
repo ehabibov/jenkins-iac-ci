@@ -100,7 +100,7 @@ tool:
           - installSource:
               installers:
                 - allureCommandlineInstaller:
-                    id: "2.13.2"
+                    id: "2.13.3"
   ansibleInstallation:
     installations:
       - name: "ansible-master"
