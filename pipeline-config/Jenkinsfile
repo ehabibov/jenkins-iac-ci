@@ -35,7 +35,8 @@ pipeline {
                 ]
             }
         }
-        stage('Deploy application environment') {
+
+        stage('Deploy application env') {
             agent { label 'master' }
             steps {
                 ansiColor('xterm') {
@@ -43,7 +44,7 @@ pipeline {
                 }
             }
         }
-        stage("Deploy selenoid environment"){
+        stage("Deploy selenoid env"){
             agent { label 'master'}
             steps {
                 ansiColor('xterm') {
@@ -51,7 +52,7 @@ pipeline {
                 }
             }
         }
-        stage('Clone test suite') {
+        stage('Integration test') {
             agent { label 'docker-agent'}
             tools {
                 maven 'Maven3'
@@ -65,8 +66,8 @@ pipeline {
                         userRemoteConfigs: [[url: 'https://github.com/ehabibov/selenium-testng.git']]
                 ]
                 dir ("integration"){
-                    sh "mvn dependency:resolve"
-                    sh "mvn dependency:resolve-plugins"
+                    sh "mvn -ntp dependency:resolve"
+                    sh "mvn -ntp dependency:resolve-plugins"
                     script {
                         if (params.MAVEN_DEBUG == true){
                             mavenDebugFlag = "-X"
@@ -85,7 +86,7 @@ pipeline {
                 }
             }
         }
-        stage("Destroy application environment"){
+        stage("Destroy application env"){
             agent { label 'master'}
             when {
                 expression { params.DELETE_APP.toBoolean() }
@@ -96,7 +97,7 @@ pipeline {
                 }
             }
         }
-        stage("Destroy selenoid environment"){
+        stage("Destroy selenoid env"){
             agent { label 'master'}
             steps {
                 ansiColor('xterm') {

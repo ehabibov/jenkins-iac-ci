@@ -3,6 +3,7 @@
    docker_network:
      name: "{{ application_network }}"
      state: "{{ desired_state }}"
+     force: yes
 
  - name: Delete MariaDB container
    docker_container:
