@@ -1,7 +1,7 @@
 ---
 - hosts: this_machine
   vars:
-    build_tag: "--{{ lookup('env','BUILD_TAG') | default('na', true) }}"
+    build_tag: "-{{ lookup('env','JOB_NAME') | default('local', true) }}"
     application_network: infrastructure-net
   roles:
     - role: install-application-cluster

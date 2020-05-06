@@ -40,7 +40,9 @@ pipeline {
             agent { label 'master' }
             steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "app-deploy", colorized: true, extras: "-v")
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts',
+                            playbook: 'infrastructure/ansible/application.yml',
+                            tags: "app-deploy", colorized: true, extras: "-v")
                 }
             }
         }
@@ -48,7 +50,9 @@ pipeline {
             agent { label 'master'}
             steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/selenoid.yml', tags: "selenoid-deploy", colorized: true, extras: "-v")
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts',
+                            playbook: 'infrastructure/ansible/selenoid.yml',
+                            tags: "selenoid-deploy", colorized: true, extras: "-v")
                 }
             }
         }
@@ -76,9 +80,9 @@ pipeline {
                     sh """
                         mvn test ${mavenDebugFlag} -ntp\
                         -Dremote.driver=true\
-                        -Dapplication.host=http://orange-hrm--${env.BUILD_TAG}\
+                        -Dapplication.host=http://orange-hrm-${env.JOB_NAME}\
                         -Dapplication.port=80\
-                        -Dremote.driver.url=http://selenoid--${env.BUILD_TAG}:4444/wd/hub\
+                        -Dremote.driver.url=http://selenoid-${env.JOB_NAME}:4444/wd/hub\
                         -Dbrowser.type=chrome\
                         -Dremote.browser.version=80.0\
                         -Dlog4j.rootLogger=\"TRACE, STDOUT\"
@@ -94,7 +98,9 @@ pipeline {
             }
             steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/application.yml', tags: "app-destroy", colorized: true, extras: "-v")
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts',
+                            playbook: 'infrastructure/ansible/application.yml',
+                            tags: "app-destroy", colorized: true, extras: "-v")
                 }
             }
         }
@@ -102,14 +108,10 @@ pipeline {
             agent { label 'master'}
             steps {
                 ansiColor('xterm') {
-                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts', playbook: 'infrastructure/ansible/selenoid.yml', tags: "selenoid-destroy", colorized: true, extras: "-v")
+                    ansiblePlaybook(inventory: 'infrastructure/ansible/hosts',
+                            playbook: 'infrastructure/ansible/selenoid.yml',
+                            tags: "selenoid-destroy", colorized: true, extras: "-v")
                 }
-            }
-        }
-        stage("Cleanup master workspace"){
-            agent { label 'master'}
-            steps {
-                cleanWs deleteDirs: true
             }
         }
     }
