@@ -21,6 +21,7 @@
        MARIADB_DATABASE: "bitnami_orangehrm"
        ALLOW_EMPTY_PASSWORD: "yes"
      state: started
+     memory: 2G
    register: db_container_metadata
 
  - name: Wait for MySQL to accept connections
@@ -51,6 +52,7 @@
        ORANGEHRM_DATABASE_NAME: "bitnami_orangehrm"
        ALLOW_EMPTY_PASSWORD: "yes"
      state: started
+     memory: 2G
    register: hrm_container_metadata
 
  - name: Wait for HRM to be installed

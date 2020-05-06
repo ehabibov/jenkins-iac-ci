@@ -21,6 +21,7 @@
                "-session-delete-timeout", "{{ session_delete_timeout }}",
                "-timeout", "{{ timeout }}",
                "-capture-driver-logs"]
+     memory: 1G
      state: present
 
  - name: Copy 'browsers.json' to container
@@ -43,4 +44,5 @@
        - "{{ selenoid_ui_host_port }}:{{ selenoid_ui_container_port }}"
      state: "{{ desired_state }}"
      command: ["-selenoid-uri", "http://selenoid{{ build_tag }}:{{ selenoid_container_port }}"]
+     memory: 1G
    register: selenoid_ui_metadata
