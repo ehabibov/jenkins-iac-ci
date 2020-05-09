@@ -78,14 +78,13 @@ pipeline {
                         }
                     }
                     sh script: """
-                        mvn test ${mavenDebugFlag} -ntp\
+                        mvn test ${mavenDebugFlag} --no-transfer-progress --batch-mode --fail-at-end --errors\
                         -Dremote.driver=true\
                         -Dapplication.host=http://orange-hrm-${env.JOB_NAME}\
                         -Dapplication.port=80\
                         -Dremote.driver.url=http://selenoid-${env.JOB_NAME}:4444/wd/hub\
                         -Dbrowser.type=chrome\
                         -Dremote.browser.version=80.0\
-                        -Dlog4j.rootLogger=\"TRACE, STDOUT\"
                     """, label: 'Execute tests'
                     archiveArtifacts artifacts: 'target/**/*.*'
                     allure results: [[path: 'target/allure-results']]
