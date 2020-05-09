@@ -70,14 +70,14 @@ pipeline {
                         userRemoteConfigs: [[url: 'https://github.com/ehabibov/selenium-testng.git']]
                 ]
                 dir ("integration"){
-                    sh "mvn -ntp dependency:resolve"
-                    sh "mvn -ntp dependency:resolve-plugins"
+                    sh script: "mvn -ntp dependency:resolve", label: "Resolve project dependencies"
+                    sh script: "mvn -ntp dependency:resolve-plugins", label: "Resolve project plugin dependencies"
                     script {
                         if (params.MAVEN_DEBUG == true){
                             mavenDebugFlag = "-X"
                         }
                     }
-                    sh """
+                    sh script: """
                         mvn test ${mavenDebugFlag} -ntp\
                         -Dremote.driver=true\
                         -Dapplication.host=http://orange-hrm-${env.JOB_NAME}\
@@ -86,7 +86,7 @@ pipeline {
                         -Dbrowser.type=chrome\
                         -Dremote.browser.version=80.0\
                         -Dlog4j.rootLogger=\"TRACE, STDOUT\"
-                    """
+                    """, label: 'Execute tests'
                     archiveArtifacts artifacts: 'target/**/*.*'
                     allure results: [[path: 'target/allure-results']]
                 }
