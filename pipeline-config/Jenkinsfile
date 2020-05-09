@@ -8,16 +8,19 @@ pipeline {
     }
     parameters {
         gitParameter name: 'CI_SCRIPTS',
-                branchFilter: 'origin/(.*)',
-                defaultValue: 'master',
                 type: 'PT_BRANCH',
                 useRepository: '.*jenkins\\-iac\\-ci.git',
-                description: 'JOB DESCRIPTION'
-        gitParameter name: 'SELENIUM',
                 branchFilter: 'origin/(.*)',
                 defaultValue: 'master',
+                selectedValue: 'DEFAULT',
+                description: 'Infrastructure provisioning source'
+        gitParameter name: 'SELENIUM',
                 type: 'PT_BRANCH',
-                useRepository: '.*selenium.*'
+                useRepository: '.*selenium.*',
+                branchFilter: 'origin/(.*)',
+                defaultValue: 'master',
+                selectedValue: 'DEFAULT',
+                description: 'Integration test source'
         booleanParam name: 'DELETE_APP', description: 'Delete application and database containers after build', defaultValue: true
         booleanParam name: 'MAVEN_DEBUG', description: 'Maven logger debug level', defaultValue: false
     }
