@@ -87,6 +87,7 @@ pipeline {
                         -Dremote.browser.version=80.0\
                         -Dlog4j.rootLogger=\"TRACE, STDOUT\"
                     """
+                    archiveArtifacts artifacts: 'target/**/*.*'
                     allure results: [[path: 'target/allure-results']]
                 }
             }
