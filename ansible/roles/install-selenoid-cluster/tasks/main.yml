@@ -27,6 +27,11 @@
  - name: Copy 'browsers.json' to container
    shell: "docker cp {{ role_path }}/files/browsers.json selenoid{{ build_tag }}:/etc"
 
+ - name: Pull browser and video images
+   shell: |
+     cat {{ role_path }}/files/browsers.json | jq -r '..|.image?|strings' | xargs -I{} docker pull {}
+     docker pull selenoid/video-recorder:latest-release
+
  - name: Start Selenoid container
    docker_container:
      name: "selenoid{{ build_tag }}"

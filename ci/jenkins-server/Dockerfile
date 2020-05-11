@@ -1,7 +1,7 @@
 FROM jenkins/jenkins:2.235
 
 USER root
-RUN apt-get update -qq && apt-get install -qqy apt-transport-https ca-certificates gnupg-agent software-properties-common && \
+RUN apt-get update -qq && apt-get install -qqy apt-transport-https ca-certificates gnupg-agent software-properties-common jq && \
     curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
     apt-add-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" && \
     apt-get update -qq && apt-get install -qqy docker-ce-cli && \
