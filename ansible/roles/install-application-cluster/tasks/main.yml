@@ -21,6 +21,7 @@
        MARIADB_DATABASE: "bitnami_orangehrm"
        ALLOW_EMPTY_PASSWORD: "yes"
      state: started
+     recreate: true
      memory: 2G
    register: db_container_metadata
 
@@ -52,6 +53,7 @@
        ORANGEHRM_DATABASE_NAME: "bitnami_orangehrm"
        ALLOW_EMPTY_PASSWORD: "yes"
      state: started
+     recreate: true
      memory: 2G
    register: hrm_container_metadata
 

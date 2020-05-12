@@ -23,6 +23,7 @@
                "-capture-driver-logs"]
      memory: 1G
      state: present
+     recreate: true
 
  - name: Copy 'browsers.json' to container
    shell: "docker cp {{ role_path }}/files/browsers.json selenoid{{ build_tag }}:/etc"
@@ -47,7 +48,8 @@
        - name: "{{ selenoid_network }}"
      published_ports:
        - "{{ selenoid_ui_host_port }}:{{ selenoid_ui_container_port }}"
-     state: "{{ desired_state }}"
      command: ["-selenoid-uri", "http://selenoid{{ build_tag }}:{{ selenoid_container_port }}"]
+     state: "{{ desired_state }}"
+     recreate: true
      memory: 1G
    register: selenoid_ui_metadata
