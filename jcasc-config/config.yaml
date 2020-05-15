@@ -113,9 +113,8 @@ unclassified:
           url: "http://afonsof.com/jenkins-material-theme/dist/material-teal.css"
 
 security:
-  scriptApproval:
-    approvedSignatures:
-      - staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods toBoolean java.lang.Boolean
+  globalJobDslSecurityConfiguration:
+    useScriptSecurity: false
 
 groovy:
   - script: >

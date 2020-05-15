@@ -1,3 +1,41 @@
+node {
+    properties([
+            parameters([
+                    [$class: 'ChoiceParameter', name: 'BROWSER',
+                     choiceType: 'PT_RADIO',
+                     description: 'Select required browser type',
+                     script: [$class: 'GroovyScript',
+                             fallbackScript: [classpath: [], sandbox: false, script:
+                                     'return["Unknown browser"]'
+                             ],
+                             script: [classpath: [], sandbox: false, script:
+                                     'return ["chrome:selected","firefox","opera"]'
+                             ]
+                     ]
+                    ],
+                    [$class: 'CascadeChoiceParameter', name: 'VERSION',
+                     referencedParameters: 'BROWSER',
+                     choiceType: 'PT_RADIO',
+                     description: 'Select target browser type version',
+                     script: [$class: 'GroovyScript',
+                             fallbackScript: [classpath: [], sandbox: false, script:
+                                     'return["Unknown version"]'
+                             ],
+                             script: [classpath: [], sandbox: false, script:
+                                '''
+                                    switch(BROWSER){
+                                        case "chrome": return ["81:selected", "80"]
+                                        case "firefox": return ["76:selected", "75"]
+                                        case "opera": return ["67:selected", "66"]
+                                    }
+                                '''
+                             ]
+                     ]
+                    ]
+            ])
+    ])
+}
+
 def mavenDebugFlag = ""
 
 pipeline {
@@ -82,12 +120,14 @@ pipeline {
                     }
                     sh script: """
                         mvn test ${mavenDebugFlag} --no-transfer-progress --batch-mode --fail-at-end --errors\
+                        -Dremote.test.run.name=${env.BUILD_TAG}\
                         -Dremote.driver=true\
+                        -Dbrowser.type=${env.BROWSER}\
+                        -Dremote.browser.version=${env.VERSION}\
+                        -Dremote.driver.host=selenoid-${env.JOB_NAME}\
+                        -Dremote.driver.port=4444\
                         -Dapplication.host=http://orange-hrm-${env.JOB_NAME}\
                         -Dapplication.port=80\
-                        -Dremote.driver.url=http://selenoid-${env.JOB_NAME}:4444/wd/hub\
-                        -Dbrowser.type=chrome\
-                        -Dremote.browser.version=80.0\
                     """, label: 'Execute tests'
                     archiveArtifacts artifacts: 'target/**/*.*'
                     allure results: [[path: 'target/allure-results']]
