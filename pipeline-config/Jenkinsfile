@@ -1,41 +1,3 @@
-node {
-    properties([
-            parameters([
-                    [$class: 'ChoiceParameter', name: 'BROWSER',
-                     choiceType: 'PT_RADIO',
-                     description: 'Select required browser type',
-                     script: [$class: 'GroovyScript',
-                             fallbackScript: [classpath: [], sandbox: false, script:
-                                     'return["Unknown browser"]'
-                             ],
-                             script: [classpath: [], sandbox: false, script:
-                                     'return ["chrome:selected","firefox","opera"]'
-                             ]
-                     ]
-                    ],
-                    [$class: 'CascadeChoiceParameter', name: 'VERSION',
-                     referencedParameters: 'BROWSER',
-                     choiceType: 'PT_RADIO',
-                     description: 'Select target browser type version',
-                     script: [$class: 'GroovyScript',
-                             fallbackScript: [classpath: [], sandbox: false, script:
-                                     'return["Unknown version"]'
-                             ],
-                             script: [classpath: [], sandbox: false, script:
-                                '''
-                                    switch(BROWSER){
-                                        case "chrome": return ["81:selected", "80"]
-                                        case "firefox": return ["76:selected", "75"]
-                                        case "opera": return ["67:selected", "66"]
-                                    }
-                                '''
-                             ]
-                     ]
-                    ]
-            ])
-    ])
-}
-
 def mavenDebugFlag = ""
 
 pipeline {
@@ -61,6 +23,9 @@ pipeline {
                 description: 'Integration test source'
         booleanParam name: 'DELETE_APP', description: 'Delete application and database containers after build', defaultValue: true
         booleanParam name: 'MAVEN_DEBUG', description: 'Maven logger debug level', defaultValue: false
+        extendedChoice name: 'BROWSER', description: 'Target browser and it\'s version', multiSelectDelimiter: ',',
+                propertyFile: '/var/jenkins_home/jcasc-config/browsers.properties', value: 'Browser,Version',
+                type: 'PT_MULTI_LEVEL_SINGLE_SELECT',  visibleItemCount: 5
     }
 
     stages {
@@ -118,6 +83,7 @@ pipeline {
                             mavenDebugFlag = "-X"
                         }
                     }
+                    sh "echo ${BROWSER.Browser} ${BROWSER.Version}"
                     sh script: """
                         mvn test ${mavenDebugFlag} --no-transfer-progress --batch-mode --fail-at-end --errors\
                         -Dremote.test.run.name=${env.BUILD_TAG}\
