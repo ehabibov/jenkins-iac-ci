@@ -23,7 +23,7 @@ pipeline {
                 description: 'Integration test source'
         booleanParam name: 'DELETE_APP', description: 'Delete application and database containers after build', defaultValue: true
         booleanParam name: 'MAVEN_DEBUG', description: 'Maven logger debug level', defaultValue: false
-        extendedChoice name: 'BROWSER', description: 'Target browser and it\'s version', multiSelectDelimiter: ',',
+        extendedChoice name: 'BROWSERS', description: 'Target browser and it\'s version', multiSelectDelimiter: ',',
                 propertyFile: '/var/jenkins_home/jcasc-config/browsers.properties', value: 'Browser,Version',
                 type: 'PT_MULTI_LEVEL_SINGLE_SELECT',  visibleItemCount: 5
     }
@@ -32,6 +32,30 @@ pipeline {
         stage('Checkout infrastructure scripts') {
             agent { label 'master' }
             steps {
+                catchError {
+                    sh "echo 1"
+                    sh "var='${params.BROWSERS}'"
+                }
+                catchError {
+                    sh "echo 2"
+                    sh "var='${BROWSERS}'"
+                }
+                catchError {
+                    sh "echo 3"
+                    sh "var='${params.Browser}'"
+                }
+                catchError {
+                    sh "echo 4"
+                    sh "var='${params.Version}'"
+                }
+                catchError {
+                    sh "echo 5"
+                    sh "var='${Version}'"
+                }
+                catchError {
+                    sh "echo 6"
+                    sh "var='${Browser}'"
+                }
                 cleanWs deleteDirs: true
                 checkout scm: [
                         $class: 'GitSCM',
