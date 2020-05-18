@@ -122,8 +122,8 @@ pipeline {
                         mvn test ${mavenDebugFlag} --no-transfer-progress --batch-mode --fail-at-end --errors\
                         -Dremote.test.run.name=${env.BUILD_TAG}\
                         -Dremote.driver=true\
-                        -Dbrowser.type=${env.BROWSER}\
-                        -Dremote.browser.version=${env.VERSION}\
+                        -Dbrowser.type=${params.BROWSER}\
+                        -Dremote.browser.version=${params.VERSION}\
                         -Dremote.driver.host=selenoid-${env.JOB_NAME}\
                         -Dremote.driver.port=4444\
                         -Dapplication.host=http://orange-hrm-${env.JOB_NAME}\

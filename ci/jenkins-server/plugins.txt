@@ -78,6 +78,7 @@ structs:1.20
 timestamper:1.11.3
 token-macro:2.12
 trilead-api:1.0.6
+uno-choice:2.3
 windows-slaves:1.6
 workflow-aggregator:2.6
 workflow-api:2.40
