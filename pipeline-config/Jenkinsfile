@@ -5,10 +5,10 @@ node {
                      choiceType: 'PT_RADIO',
                      description: 'Select required browser type',
                      script: [$class: 'GroovyScript',
-                             fallbackScript: [classpath: [], sandbox: false, script:
+                             fallbackScript: [classpath: [], sandbox: true, script:
                                      'return["Unknown browser"]'
                              ],
-                             script: [classpath: [], sandbox: false, script:
+                             script: [classpath: [], sandbox: true, script:
                                      'return ["chrome:selected","firefox","opera"]'
                              ]
                      ]
@@ -18,10 +18,10 @@ node {
                      choiceType: 'PT_RADIO',
                      description: 'Select target browser type version',
                      script: [$class: 'GroovyScript',
-                             fallbackScript: [classpath: [], sandbox: false, script:
+                             fallbackScript: [classpath: [], sandbox: true, script:
                                      'return["Unknown version"]'
                              ],
-                             script: [classpath: [], sandbox: false, script:
+                             script: [classpath: [], sandbox: true, script:
                                 '''
                                     switch(BROWSER){
                                         case "chrome": return ["81:selected", "80"]
