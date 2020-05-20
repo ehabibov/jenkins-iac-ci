@@ -31,6 +31,10 @@ services:
       jenkins-net:
         aliases:
           - dproxy
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
 networks:
   jenkins-net:
