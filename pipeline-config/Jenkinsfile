@@ -48,14 +48,14 @@ pipeline {
         gitParameter name: 'CI_SCRIPTS',
                 type: 'PT_BRANCH',
                 useRepository: '.*jenkins\\-iac\\-ci.git',
-                branchFilter: 'origin/(.*)',
+                branchFilter: 'origin.*/(.*)',
                 defaultValue: 'master',
                 selectedValue: 'DEFAULT',
                 description: 'Infrastructure provisioning source'
         gitParameter name: 'SELENIUM',
                 type: 'PT_BRANCH',
-                useRepository: '.*selenium.*',
-                branchFilter: 'origin/(.*)',
+                useRepository: '.*selenium\\-testng.git',
+                branchFilter: 'origin.*/(.*)',
                 defaultValue: 'master',
                 selectedValue: 'DEFAULT',
                 description: 'Integration test source'

@@ -54,7 +54,7 @@ jenkins:
         templates:
           - labelString: "docker-agent"
             dockerTemplateBase:
-              image: "jenkins/slave"
+              image: "jenkins/slave:4.3-4"
               network: "infrastructure-net"
             remoteFs: "/home/jenkins/agent"
             connector:
@@ -77,7 +77,10 @@ jobs:
                           remote {
                               url 'https://github.com/ehabibov/jenkins-iac-ci.git'
                           }
-                      branch 'master'
+                          remote {
+                              url 'https://github.com/ehabibov/selenium-testng.git'
+                          }
+                          branch 'master'
                       }
                   }
               }
