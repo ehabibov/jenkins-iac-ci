@@ -119,7 +119,7 @@ pipeline {
                         }
                     }
                     sh script: """
-                        mvn test ${mavenDebugFlag} --no-transfer-progress --batch-mode --fail-at-end --errors\
+                        mvn test ${mavenDebugFlag} -P pipeline --no-transfer-progress --batch-mode --fail-at-end --errors\
                         -Dremote.test.run.name=${env.BUILD_TAG}\
                         -Dremote.driver=true\
                         -Dbrowser.type=${params.BROWSER}\
