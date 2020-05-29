@@ -14,6 +14,10 @@
         hrm_https_host_port: "443"
         hrm_https_container_port: "443"
         desired_state: started
+        database_name: "orangehrm_db"
+        database_user: "db_user"
+        database_password: "db_password"
+        database_root_password: "db_root_password"
       tags: app-deploy
     - role: destroy-application-cluster
       vars:

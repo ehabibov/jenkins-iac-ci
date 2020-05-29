@@ -17,9 +17,10 @@
      published_ports:
        - "{{ mariadb_host_port }}:{{ mariadb_container_port }}"
      env:
-       MARIADB_USER: "bn_orangehrm"
-       MARIADB_DATABASE: "bitnami_orangehrm"
-       ALLOW_EMPTY_PASSWORD: "yes"
+       MARIADB_DATABASE: "{{ database_name }}"
+       MARIADB_USER: "{{ database_user }}"
+       MARIADB_PASSWORD: "{{ database_password }}"
+       MARIADB_ROOT_PASSWORD: "{{ database_root_password }}"
      state: started
      recreate: true
      memory: 2G
@@ -49,9 +50,13 @@
      env:
        MARIADB_HOST: "mariadb{{ build_tag }}"
        MARIADB_PORT_NUMBER: "{{ mariadb_container_port }}"
-       ORANGEHRM_DATABASE_USER: "bn_orangehrm"
-       ORANGEHRM_DATABASE_NAME: "bitnami_orangehrm"
-       ALLOW_EMPTY_PASSWORD: "yes"
+       ORANGEHRM_DATABASE_NAME: "{{ database_name }}"
+       ORANGEHRM_DATABASE_USER: "{{ database_user }}"
+       ORANGEHRM_DATABASE_PASSWORD: "{{ database_password }}"
+       MYSQL_CLIENT_CREATE_DATABASE_NAME: "{{ database_name }}"
+       MYSQL_CLIENT_CREATE_DATABASE_USER: "{{ database_user }}"
+       MYSQL_CLIENT_CREATE_DATABASE_PASSWORD: "{{ database_password }}"
+       MARIADB_ROOT_PASSWORD: "{{ database_root_password }}"
      state: started
      recreate: true
      memory: 2G
