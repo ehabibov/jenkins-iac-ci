@@ -23,7 +23,7 @@ As integration test framework used [Selenium/TestNG](https://github.com/ehabibov
 ### Deploy
  
 Jenkins installation:  
-`ci/deploy.sh`  
+`ci/startup.sh`  
 Jenkins startup process could take ~15 mins. 
 
 Cleanup:  
